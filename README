@@ -1,0 +1,17 @@
+# Event-driven Dual DB (Oracle + Postgres) with Kafka
+
+## Start infrastructure
+docker compose up -d
+
+## Run services (3 terminals)
+cd work-order-service && mvn spring-boot:run
+cd reporting-service && mvn spring-boot:run
+cd notification-service && mvn spring-boot:run
+
+## Test
+curl -X POST http://localhost:8081/api/work-orders \
+  -H "Content-Type: application/json" \
+  -d '{"site":"DFW","assetType":"AHU","assetId":"AHU-12","priority":"HIGH","description":"Low SAT"}'
+
+## Verify Postgres reporting table
+docker exec -it postgres psql -U reporting_user -d reporting -c "select * from work_order_report;"
